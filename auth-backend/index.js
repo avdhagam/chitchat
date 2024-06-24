@@ -19,5 +19,5 @@ app.get('/', (req, res) => {
 
 app.listen(PORT, () => {
     connectToMongoDB();
-    console.log(`server listening at http://localhost:5000`);
+    console.log(`server listening at http://localhost:${PORT}`);
 })
