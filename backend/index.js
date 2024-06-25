@@ -14,11 +14,15 @@ const io = new Server(server, {
 
 /* io is an instance of the socket.io server class that is associated w
 attached to the HTTP server */
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
+
     console.log("client connected");
     socket.on('chat msg', (msg) => {
-        console.log("received msg: " + msg);
         socket.broadcast.emit('chat msg', msg);
+        console.log("received msg: " + msg);
+
+
+
     })
 
 })
