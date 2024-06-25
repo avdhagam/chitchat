@@ -1,5 +1,6 @@
 import User from "../models/user.model.js"
 import bcrypt from "bcrypt"
+import generateJWTTokenAndSetCookie from "../utils/generateToken.js"
 
 const signup = async (req, res) => {
     try {
@@ -14,14 +15,16 @@ const signup = async (req, res) => {
         }
         else {
             const user = new User({ username: username, password: hashedPassword });
+            generateJWTTokenAndSetCookie(user._id, res);
             await user.save();
             res.status(201).json({ message: "User registered!" });
-            res.status(500).json({ message: "User registration failed" })
+
         }
 
     }
     catch (error) {
         console.log(error);
+        res.status(500).json({ message: "User registration failed" })
     }
 
 }
