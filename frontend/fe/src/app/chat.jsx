@@ -20,7 +20,7 @@ const Chat = () => {
 
         newSocket.on('chat msg', (msg) => {
             console.log('Received message:', msg);
-            setMsgs(prevMsgs => [...prevMsgs, msg]); // Update the state to include the new message
+            setMsgs(prevMsgs => [...prevMsgs, { text: msg, SentByCurrUser: false }]); // Update the state to include the new message
         });
 
         // Clean up function
@@ -31,7 +31,7 @@ const Chat = () => {
         e.preventDefault();
         if (socket) {
             socket.emit('chat msg', msg);
-            setMsgs(prevMsgs => [...prevMsgs, msg]);
+            setMsgs(prevMsgs => [...prevMsgs, { text: msg, SentByCurrUser: true }]);
             setMsg('');
         }
     }
@@ -41,8 +41,12 @@ const Chat = () => {
         <div>
             <div className='msgs-container h-4/5 overflow-scroll'>
                 {msgs.map((msg, index) => (
-                    <div key={index} className="m-5 text-right">
-                        {msg}
+                    <div key={index} className={`m-5 ${msg.SentByCurrUser ? 'text-right' :
+                        'text-left'}`}>
+                        <span className={`${msg.SentByCurrUser ? 'bg-blue-200' : 'bg-green-200'} p-3 rounded-2xl`}>
+                            {msg.text}
+                        </span>
+
                     </div>
                 ))}
             </div>
