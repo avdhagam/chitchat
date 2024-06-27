@@ -2,8 +2,11 @@
 
 import React, { useState } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/navigation';
+
 
 const Auth = () => {
+    const router = useRouter()
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
 
@@ -14,6 +17,8 @@ const Auth = () => {
             const res = await axios.post('http://localhost:8000/auth/signup', {
                 username: username,
                 password: password
+            }, {
+                withCredentials: true
             });
             console.log(res.data);
 
@@ -21,18 +26,38 @@ const Auth = () => {
                 alert('Username already exists');
             } else {
                 alert('User registered successfully!');
+
             }
         } catch (error) {
             console.log("Error in signup function : ", error.message);
         }
     }
 
+    const loginFunc = async (event) => {
+        event.preventDefault();
+
+        try {
+            const res = await axios.post('http://localhost:8000/auth/login', {
+                username: username,
+                password: password
+            }, {
+                withCredentials: true
+            });
+            router.push('/Chat')
+
+
+        } catch (error) {
+            console.log("Error in login function : ", error.message);
+        }
+    }
+
+
     return (
         <div className="bg-[#FADEDE] min-h-screen flex flex-col items-center justify-center">
             <img src="logo.png" alt="logo" className="w-full max-w-md mb-6" />
             <div className="w-full max-w-md space-y-8 p-6 bg-white rounded-lg shadow-md">
 
-                <form className="space-y-6" onSubmit={signUpFunc}>
+                <form className="space-y-6" >
                     <div>
                         <label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900">Username</label>
                         <div className="mt-2">
@@ -68,12 +93,14 @@ const Auth = () => {
                     <div className="flex">
                         <button
                             type="submit"
+                            onClick={signUpFunc}
                             className="m-3 flex w-1/2 justify-center rounded-md bg-[#e89a9a] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#efb7b7] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                             Sign up
                         </button>
                         <button
                             type="submit"
+                            onClick={loginFunc}
                             className="m-3 flex w-1/2 justify-center rounded-md bg-[#e89a9a] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#efb7b7] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
                             Login

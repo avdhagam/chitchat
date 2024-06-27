@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import http from 'http';
 import cors from "cors"
 
+
 const app = express();
 app.use(cors());
 const server = http.createServer(app);
@@ -43,7 +44,6 @@ app.get('/', (req, res) => {
     res.send("congrats bros");
 })
 
-app.use('/auth', authRouter);
 
 
 server.listen(port, () => {
