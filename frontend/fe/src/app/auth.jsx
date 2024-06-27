@@ -25,6 +25,7 @@ const Auth = () => {
             if (res.data.message === "Username already exists :(") {
                 alert('Username already exists');
             } else {
+                router.replace('/chat')
                 alert('User registered successfully!');
 
             }
@@ -43,7 +44,7 @@ const Auth = () => {
             }, {
                 withCredentials: true
             });
-            router.push('/Chat')
+            router.replace('/chat')
 
 
         } catch (error) {
