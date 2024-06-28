@@ -21,9 +21,13 @@ attached to the HTTP server */
 io.on('connection', (socket) => {
 
     console.log("client connected");
+    const username = socket.handshake.query.username;
+    console.log('Username: ', username);
     socket.on('chat msg', (msg) => {
-        socket.broadcast.emit('chat msg', msg);
-        console.log("received msg: " + msg);
+        // socket.broadcast.emit('chat msg', msg);
+        console.log("sender: ", msg.sender);
+        console.log("receiver: ", msg.receiver);
+        console.log("msg: ", msg.textMsg);
 
 
 

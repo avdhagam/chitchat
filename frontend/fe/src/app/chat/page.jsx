@@ -3,6 +3,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
+import { useAuthStore } from "../zustand/useAuthStore";
 
 
 const Chat = () => {
@@ -11,11 +12,16 @@ const Chat = () => {
     const [msg, setMsg] = useState('');
     const [socket, setSocket] = useState(null);
     const [msgs, setMsgs] = useState([]);
+    const { authName } = useAuthStore();
 
 
     useEffect(() => {
         // Establish WebSocket connection
-        const newSocket = io('http://localhost:5000');
+        const newSocket = io('http://localhost:5000', {
+            query: {
+                username: authName
+            }
+        });
         setSocket(newSocket);
 
         newSocket.on('chat msg', (msg) => {
@@ -29,8 +35,13 @@ const Chat = () => {
 
     const sendMsg = (e) => {
         e.preventDefault();
+        const msgtobesent = {
+            textMsg: msg,
+            sender: "sri",
+            receiver: "avani"
+        }
         if (socket) {
-            socket.emit('chat msg', msg);
+            socket.emit('chat msg', msgtobesent);
             setMsgs(prevMsgs => [...prevMsgs, { text: msg, SentByCurrUser: true }]);
             setMsg('');
         }
