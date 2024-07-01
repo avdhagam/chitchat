@@ -24,14 +24,17 @@ io.on('connection', (socket) => {
     const username = socket.handshake.query.username;
     console.log('Username: ', username);
     socket.on('chat msg', (msg) => {
-        // socket.broadcast.emit('chat msg', msg);
+
+
+        // Broadcast the message to other clients
+        socket.broadcast.emit('chat msg', msg);
+
+        // Log the message details
         console.log("sender: ", msg.sender);
         console.log("receiver: ", msg.receiver);
-        console.log("msg: ", msg.textMsg);
-
-
-
-    })
+        console.log("msg: ", msg.text);
+        //socket.broadcast.emit('chat msg', msg);
+    });
 
 })
 

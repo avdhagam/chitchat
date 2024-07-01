@@ -6,4 +6,3 @@ export const useAuthStore = create((set) => ({
     authName: '',
     updateAuthName: (name) => set({ authName: name })
 }))
-
