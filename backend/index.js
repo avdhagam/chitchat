@@ -16,6 +16,8 @@ const io = new Server(server, {
     }
 });
 
+const userSocketMap = {};
+
 /* io is an instance of the socket.io server class that is associated w
 attached to the HTTP server */
 io.on('connection', (socket) => {
@@ -23,17 +25,23 @@ io.on('connection', (socket) => {
     console.log("client connected");
     const username = socket.handshake.query.username;
     console.log('Username: ', username);
+
+    userSocketMap[username] = socket;
+
     socket.on('chat msg', (msg) => {
-
-
         // Broadcast the message to other clients
-        socket.broadcast.emit('chat msg', msg);
+        //socket.broadcast.emit('chat msg', msg);
 
         // Log the message details
         console.log("sender: ", msg.sender);
         console.log("receiver: ", msg.receiver);
         console.log("msg: ", msg.text);
         //socket.broadcast.emit('chat msg', msg);
+
+        const receiverSocket = userSocketMap[msg.receiver]
+        if (receiverSocket) {
+            receiverSocket.emit('chat msg', msg);
+        }
     });
 
 })
