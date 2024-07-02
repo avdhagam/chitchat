@@ -7,6 +7,8 @@ import { useAuthStore } from "../zustand/useAuthStore";
 import { useUsersStore } from '../zustand/useUsersStore';
 import axios from 'axios';
 import ChatUsers from '../_components/chatUsers.jsx';
+import { useChatReceiverStore } from '../zustand/useChatReceiverStore';
+import { useChatMsgsStore } from '../zustand/useChatMsgsStore';
 
 
 const Chat = () => {
@@ -22,9 +24,12 @@ const Chat = () => {
 
     const [msg, setMsg] = useState('');
     const [socket, setSocket] = useState(null);
-    const [msgs, setMsgs] = useState([]);
+    //const [msgs, setMsgs] = useState([]);
     const { authName } = useAuthStore();
     const { updateUsers } = useUsersStore();
+    const { chatReceiver } = useChatReceiverStore();
+    const { chatMsgs, updateChatMsgs } = useChatMsgsStore();
+
 
 
     useEffect(() => {
@@ -38,7 +43,8 @@ const Chat = () => {
 
         newSocket.on('chat msg', (msg) => {
             console.log('Received message:', msg);
-            setMsgs(prevMsgs => [...prevMsgs, { text: msg.text, SentByCurrUser: false }]); // Update the state to include the new message
+            updateChatMsgs([...chatMsgs, msg]);
+            //setMsgs(prevMsgs => [...prevMsgs, { text: msg.text, SentByCurrUser: false }]); // Update the state to include the new message
         });
 
         getUserData();
@@ -52,31 +58,44 @@ const Chat = () => {
         const msgtobesent = {
             text: msg,
             sender: authName,
-            receiver: "avani"
+            receiver: chatReceiver
         };
         if (socket) {
             socket.emit('chat msg', msgtobesent);
-            setMsgs(prevMsgs => [...prevMsgs, { text: msg, SentByCurrUser: true }]);
+            updateChatMsgs([...chatMsgs, msgtobesent]);
+            // setMsgs(prevMsgs => [...prevMsgs, { text: msg, SentByCurrUser: true }]);
             setMsg('');
         }
     }
 
 
     return (
-        <div className='h-screen flex divide-x-4'>
-            <div className='w-1/5 bg-rose-200'>
+        <div className='h-screen flex divide-x-4 divide-[#f5c6c9]'>
+            <div className='w-1/5 bg-[#fadedf]'>
 
                 <ChatUsers></ChatUsers>
             </div>
 
-            <div className='w-4/5 flex flex-col'>
-                <div className='msgs-container h-4/5 overflow-scroll'>
-                    {msgs.map((msg, index) => (
-                        <div key={index} className={`m-5 ${msg.SentByCurrUser ? 'text-right' :
+            <div className='w-4/5 flex flex-col '>
+                <div className='w-full bg-[#fadedf] p-3  flex items-center'>
+                    <div className="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 mr-4">
+                        <svg className="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h1 className='text-xl text-[#b88889] font-semibold'>{chatReceiver}</h1>
+
+                </div>
+
+
+                <div className='msgs-container h-4/5 overflow-y-auto '>
+                    {chatMsgs.map((msg, index) => (
+                        <div key={index} className={`m-4  p-1 ${msg.sender === authName ? 'text-right' :
                             'text-left'}`}>
-                            <span className={`${msg.SentByCurrUser ? 'bg-blue-200' : 'bg-green-200'} p-3 rounded-2xl`}>
+                            <span className={`${msg.sender === authName ? 'bg-[#e6b2cd]' : 'bg-[#e6b2cd]'} p-3 my-5 rounded-2xl`}>
                                 {msg.text}
                             </span>
+
 
                         </div>
                     ))}
@@ -91,7 +110,7 @@ const Chat = () => {
                             required
                             className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
                         <button type="submit"
-                            className="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            className="text-white absolute end-2.5 bottom-2.5 bg-[#b67d9a] hover:bg-[#f9d6e9] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">
                             Send
                         </button>
                     </div>
