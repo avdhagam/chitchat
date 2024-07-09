@@ -34,7 +34,7 @@ const Chat = () => {
 
     useEffect(() => {
         // Establish WebSocket connection
-        const newSocket = io('http://localhost:5000', {
+        const newSocket = io('http://localhost:5001', {
             query: {
                 username: authName
             }
