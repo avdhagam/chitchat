@@ -4,6 +4,9 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from "./zustand/useAuthStore";
+import dotenv from "dotenv"
+
+dotenv.config();
 
 
 
@@ -17,7 +20,7 @@ const Auth = () => {
         event.preventDefault();
 
         try {
-            const res = await axios.post('http://localhost:8081/auth/signup', {
+            const res = await axios.post(`http://localhost:8081/auth/signup`, {
                 username: username,
                 password: password
             }, {
@@ -42,7 +45,7 @@ const Auth = () => {
         event.preventDefault();
 
         try {
-            const res = await axios.post('http://localhost:8081/auth/login', {
+            const res = await axios.post(`http://localhost:8081/auth/login`, {
                 username: username,
                 password: password
             }, {

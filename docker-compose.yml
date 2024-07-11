@@ -2,24 +2,28 @@ version: '3.8'
 
 services:
   backend:
+    image: avanidhagam/chitchatbackend:lts
     build:
       context: ./backend # Path to the backend Dockerfile
     ports:
       - "5000:5000"
 
   backend2:
+    image: avanidhagam/chitchat-backend2:lts
     build:
       context: ./backend # Path to the backend Dockerfile
     ports:
       - "5001:5000"
 
   auth-backend:
+    image: avanidhagam/chitchat-auth-backend:lts
     build:
       context: ./auth-backend # Path to the backend Dockerfile
     ports:
       - "8081:8081"
 
   frontend:
+    image: avanidhagam/chitchat-frontend:lts
     build:
       context: ./frontend/fe # Path to the frontend Dockerfile
     ports:
@@ -29,6 +33,7 @@ services:
 
   frontend2:
     # Indented to be part of the services block
+    image: avanidhagam/chitchat-frontend2:lts
     build:
       context: ./frontend2/fe # Path to the frontend Dockerfile
     ports:

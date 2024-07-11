@@ -6,6 +6,12 @@ import cors from "cors"
 import connectToMongoDB from './db/connectToMongoDB.js';
 import { addMsgToConversation } from "./controllers/msgs.controller.js";
 import msgsRouter from "./routes/msgs.route.js"
+import { subscribe, publish } from "./redis/msgsPubSub.js";
+
+
+dotenv.config();
+const port = process.env.PORT || 5000;
+//use the port specified in env.PORT or use 5000
 
 
 const app = express();
@@ -23,6 +29,8 @@ const userSocketMap = {};
 
 /* io is an instance of the socket.io server class that is associated w
 attached to the HTTP server */
+
+
 io.on('connection', (socket) => {
 
     console.log("client connected");
@@ -31,25 +39,33 @@ io.on('connection', (socket) => {
 
     userSocketMap[username] = socket;
 
+    const channelName = `chat_${username}`
+    subscribe(channelName, (msg) => {
+        console.log('Received message:', msg);
+        socket.emit("chat msg", JSON.parse(msg));
+    })
+
     socket.on('chat msg', (msg) => {
-        // Broadcast the message to other clients
-        //socket.broadcast.emit('chat msg', msg);
-
-        // Log the message details
-        console.log("sender: ", msg.sender);
-        console.log("receiver: ", msg.receiver);
-        console.log("msg: ", msg.text);
-        //socket.broadcast.emit('chat msg', msg);
-
-        const receiverSocket = userSocketMap[msg.receiver]
+        console.log(msg.sender);
+        console.log(msg.receiver);
+        console.log(msg.text);
+        console.log(msg);
+        const receiverSocket = userSocketMap[msg.receiver];
         if (receiverSocket) {
+            //both sender and receiver are connected to same BE
             receiverSocket.emit('chat msg', msg);
+        } else {
+            // sender and receiver on diff BEs, so we need to use pubsub
+            const channelName = `chat_${msg.receiver}`
+            publish(channelName, JSON.stringify(msg));
         }
+
         addMsgToConversation([msg.sender, msg.receiver], {
             text: msg.text,
             sender: msg.sender,
             receiver: msg.receiver
-        })
+        }
+        )
     });
 
 })
@@ -57,13 +73,6 @@ io.on('connection', (socket) => {
 app.use('/msgs', msgsRouter);
 
 
-
-
-//dotenv library loads env variables from .env file to process.env
-
-dotenv.config();
-const port = process.env.PORT || 5000;
-//use the port specified in env.PORT or use 5000
 
 app.get('/', (req, res) => {
     res.send("congrats bros");

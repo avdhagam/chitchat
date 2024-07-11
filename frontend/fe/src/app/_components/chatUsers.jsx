@@ -3,8 +3,12 @@ import { useUsersStore } from '../zustand/useUsersStore'
 import { useChatReceiverStore } from '../zustand/useChatReceiverStore';
 import { useChatMsgsStore } from '../zustand/useChatMsgsStore';
 import { useAuthStore } from '../zustand/useAuthStore';
+import dotenv from "dotenv"
+
 
 import axios from 'axios';
+
+dotenv.config();
 
 const ChatUsers = () => {
     const { users } = useUsersStore();
@@ -19,7 +23,7 @@ const ChatUsers = () => {
     useEffect(() => {
         const getMsgs = async () => {
 
-            const res = await axios.get('http://localhost:5000/msgs',
+            const res = await axios.get(`http://localhost:5000/msgs`,
                 {
                     params: {
                         'sender': authName,

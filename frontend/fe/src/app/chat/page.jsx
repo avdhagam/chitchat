@@ -1,6 +1,7 @@
 
 
 'use client'
+
 import React, { useState, useEffect } from 'react';
 import io from "socket.io-client";
 import { useAuthStore } from "../zustand/useAuthStore";
@@ -9,12 +10,15 @@ import axios from 'axios';
 import ChatUsers from '../_components/chatUsers.jsx';
 import { useChatReceiverStore } from '../zustand/useChatReceiverStore';
 import { useChatMsgsStore } from '../zustand/useChatMsgsStore';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 
 const Chat = () => {
 
     const getUserData = async () => {
-        const res = await axios.get('http://localhost:8081/users', {
+        const res = await axios.get(`http://localhost:8081/users`, {
             withCredentials: true
         })
         updateUsers(res.data);
@@ -34,7 +38,7 @@ const Chat = () => {
 
     useEffect(() => {
         // Establish WebSocket connection
-        const newSocket = io('http://localhost:5000', {
+        const newSocket = io(`http://localhost:5000`, {
             query: {
                 username: authName
             }
@@ -92,7 +96,7 @@ const Chat = () => {
                     {chatMsgs.map((msg, index) => (
                         <div key={index} className={`m-4  p-1 ${msg.sender === authName ? 'text-right' :
                             'text-left'}`}>
-                            <span className={`${msg.sender === authName ? 'bg-[#e6b2cd]' : 'bg-[#e6b2cd]'} p-3 my-5 rounded-2xl`}>
+                            <span className={`${msg.sender === authName ? 'bg-[#d6b5c6]' : 'bg-[#e6b2cd]'} p-3 my-5 rounded-2xl`}>
                                 {msg.text}
                             </span>
 

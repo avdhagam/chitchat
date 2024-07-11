@@ -9,12 +9,15 @@ import axios from 'axios';
 import ChatUsers from '../_components/chatUsers.jsx';
 import { useChatReceiverStore } from '../zustand/useChatReceiverStore';
 import { useChatMsgsStore } from '../zustand/useChatMsgsStore';
+import dotenv from "dotenv"
+
+dotenv.config();
 
 
 const Chat = () => {
 
     const getUserData = async () => {
-        const res = await axios.get('http://localhost:8081/users', {
+        const res = await axios.get(`http://localhost:8081/users`, {
             withCredentials: true
         })
         updateUsers(res.data);
@@ -34,7 +37,7 @@ const Chat = () => {
 
     useEffect(() => {
         // Establish WebSocket connection
-        const newSocket = io('http://localhost:5001', {
+        const newSocket = io(`http://localhost:5001`, {
             query: {
                 username: authName
             }
