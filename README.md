@@ -22,4 +22,4 @@ ChitChat is a real-time chat application designed to facilitate seamless communi
 + Websockets using Socket.io
 + PubSub using Redis
 + Containerization using Docker
-+ User Authentication using JWT
++ User Authorization using JWT
